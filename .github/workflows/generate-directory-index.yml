@@ -11,60 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    # Check out the repository code
     - name: Checkout Repository
       uses: actions/checkout@v3
-
-    # Setup Node.js environment
+      
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '14'
-
-    # Generate directory index
+       
     - name: Generate Directory Index
-      run: |
-        const fs = require('fs');
-        const path = require('path');
-
-        function generateDirectoryListing(dirPath, baseUrl = '') {
-          let htmlContent = '<ul>';
-          const items = fs.readdirSync(dirPath);
-
-          for (const item of items) {
-            const itemPath = path.join(dirPath, item);
-            const itemStat = fs.statSync(itemPath);
-
-            if (itemStat.isDirectory()) {
-              htmlContent += `<li><b>${item}/</b>${generateDirectoryListing(itemPath, `${baseUrl}${item}/`)}</li>`;
-            } else {
-              htmlContent += `<li><a href="${baseUrl}${item}">${item}</a></li>`;
-            }
-          }
-
-          htmlContent += '</ul>';
-          return htmlContent;
-        }
-
-        const startDir = path.join(__dirname);
-        const indexHtmlContent = `<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Directory Listing</title>
-        </head>
-        <body>
-            <h1>Directory Listing</h1>
-            ${generateDirectoryListing(startDir)}
-        </body>
-        </html>`;
-
-        fs.writeFileSync('index.html', indexHtmlContent);
-        console.log('Index file generated successfully with nested folders.');
-      shell: bash
-      id: generate-index
+      run: node generate-index.js
       
-    # Deploy to GitHub Pages using peaceiris/actions-gh-pages action
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
