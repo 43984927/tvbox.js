@@ -1,0 +1,30 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      - name: Generate Index Page
+        run: |
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Directory Listing</title></head><body><h1>Directory Listing</h1><ul>' > index.html
+          echo "$(ls -R | grep ':$' | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/' | awk '{print "<li><a href=\"./" $1 "\">" $1 "</a></li>"}')" >> index.html
+          echo '</ul></body></html>' >> index.html
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: . # The folder the action should deploy.
