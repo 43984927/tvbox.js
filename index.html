@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Directory Content</title>
+</head>
+<body>
+    <script>
+        // 列出目录文件使用JavaScript
+        var req = new XMLHttpRequest();
+        req.open('GET', '.', false); 
+        req.send(null);
+        
+        var files = req.responseText.split('\n');
+        var fileDiv = document.getElementById('files');
+        
+        files.forEach(function (file) {
+            fileDiv.innerHTML += file + '<br>';
+        });
+    </script>
+
+    <div id="files"></div>
+</body>
+</html>
